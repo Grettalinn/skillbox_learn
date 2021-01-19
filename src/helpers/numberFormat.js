@@ -1,3 +1,7 @@
 export default function numberFormat(value) {
-  return new Intl.NumberFormat().format(value);
+  try {
+    return new Intl.NumberFormat().format(value);
+  } catch {
+    return value;
+  }
 }

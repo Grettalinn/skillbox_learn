@@ -40,7 +40,7 @@
 
             <fieldset class="form__block">
               <legend class="form__legend">Цвет:</legend>
-              <ProductColorList :colors="product.colors"/>
+              <ProductColorList :colors="product.colors" :current-color.sync="currentColor"/>
             </fieldset>
 
             <fieldset class="form__block">
@@ -161,9 +161,7 @@ import ProductColorList from '@/components/ProductColorList.vue';
 
 export default {
   props: ['pageParams'],
-  components: {
-    ProductColorList,
-  },
+  components: { ProductColorList },
   filters: {
     numberFormat,
   },
@@ -177,6 +175,18 @@ export default {
   },
   methods: {
     gotoPage,
+  },
+  data() {
+    return {
+      currentColor: {},
+    };
+  },
+  watch: {
+    color(value) {
+      const cl = this.product.colors.find((color) => color.value === value);
+      this.currentColor.id = cl.id;
+      this.currentColor.value = cl.value;
+    },
   },
 };
 </script>

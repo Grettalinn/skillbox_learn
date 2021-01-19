@@ -32,7 +32,7 @@ export default {
       filterPriceFrom: 0,
       filterPriceTo: 0,
       filterCategoryId: 0,
-      filterColor: '',
+      filterColor: {},
       page: 1,
       productsPerPage: 3,
     };
@@ -50,7 +50,7 @@ export default {
         filteredProducts = filteredProducts.filter((product) => product.categoryId === this.filterCategoryId);
       }
       if (this.filterColor.length > 0) {
-        filteredProducts = filteredProducts.filter((product) => product.colors.includes(this.filterColor));
+        filteredProducts = filteredProducts.filter((product) => product.colors.find((color) => color.value === this.filterColor));
       }
       return filteredProducts;
     },

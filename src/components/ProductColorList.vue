@@ -1,14 +1,26 @@
 <template>
   <ul class="colors colors--black">
-    <ProductColor v-for="color in colors" :key="color" :color="color"/>
+    <li class="colors__item" v-for="color in colors" :key="color.id">
+      <label class="colors__label">
+        <input class="colors__radio sr-only" type="radio" :id="color.id" :value=color.value v-model="computedColor.value">
+        <span class="colors__value" :style="{ backgroundColor: color.value }"></span>
+      </label>
+    </li>
   </ul>
 </template>
 
 <script>
-import ProductColor from '@/components/ProductColor.vue';
-
 export default {
-  components: { ProductColor },
-  props: ['colors'],
+  props: ['colors', 'currentColor'],
+  computed: {
+    computedColor: {
+      get() {
+        return this.currentColor;
+      },
+      set(id, value) {
+        this.$emit('update:currentColor', { id, value });
+      },
+    },
+  },
 };
 </script>

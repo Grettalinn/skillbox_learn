@@ -1,5 +1,5 @@
 <template>
-  <li class="catalog__item">
+  <ul class="catalog__item">
     <a class="catalog__pic" href="#" @click.prevent="gotoPage('product', {id: product.id})">
       <img :src="product.image" :alt="product.title">
     </a>
@@ -11,8 +11,8 @@
     <span class="catalog__price">
       {{ product.price | numberFormat }} ₽
     </span>
-    <ProductColorList :colors="product.colors"/>
-  </li>
+    <ProductColorList :colors="product.colors" :current-color.sync="currentColor"/>
+  </ul>
 </template>
 
 <script>
@@ -24,8 +24,18 @@ export default {
   components: { ProductColorList },
   data() {
     return {
-      color: '#73B6EA',
+      currentColor: {
+        id: this.product.colors.find((color) => color.value === this.product.checkedColor).id,
+        value: this.product.checkedColor,
+      },
     };
+  },
+  watch: {
+    color(value) {
+      const cl = this.product.colors.find((color) => color.value === (value));
+      this.currentColor.id = cl.id;
+      this.currentColor.value = cl.value;
+    },
   },
   filters: {
     numberFormat,
@@ -34,15 +44,5 @@ export default {
     gotoPage,
   },
   props: ['product'],
-  computed: {
-    checkColor: {
-      get() {
-        return this.color;
-      },
-      set(newColor) {
-        this.color = newColor;
-      },
-    },
-  },
 };
 </script>
