@@ -24,17 +24,12 @@ export default {
   components: { ProductColorList },
   data() {
     return {
-      currentColor: {
-        id: this.product.colors.find((color) => color.value === this.product.checkedColor).id,
-        value: this.product.checkedColor,
-      },
+      currentColor: this.product.checkedColor,
     };
   },
   watch: {
     color(value) {
-      const cl = this.product.colors.find((color) => color.value === (value));
-      this.currentColor.id = cl.id;
-      this.currentColor.value = cl.value;
+      this.currentColor = value;
     },
   },
   filters: {
@@ -46,3 +41,8 @@ export default {
   props: ['product'],
 };
 </script>
+<style>
+.colors--black {
+  --border-color: #222;
+}
+</style>

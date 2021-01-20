@@ -35,5 +35,13 @@ export default {
     eventBus.$on('gotoPage', (pageName, pageParams) => this.gotoPage(pageName, pageParams));
   },
 };
-
 </script>
+
+<style>
+.color_black span {
+  color: black;
+}
+.color_white span {
+  color: white;
+}
+</style>

@@ -27,7 +27,7 @@
 
       <fieldset class="form__block">
         <legend class="form__legend">Цвет</legend>
-        <ProductColorList :colors="colors" :current-color.sync="currentColor"/>
+        <ProductColorList class="white_class" :colors="colors" :current-color.sync="currentColor"/>
       </fieldset>
 
       <fieldset class="form__block">
@@ -121,7 +121,7 @@ export default {
       currentPriceFrom: 0,
       currentPriceTo: 0,
       currentCategoryId: 0,
-      currentColor: {},
+      currentColor: '',
     };
   },
   watch: {
@@ -135,9 +135,7 @@ export default {
       this.currentCategoryId = value;
     },
     color(value) {
-      const cl = colors.find((color) => color.value === value);
-      this.currentColor.id = cl.id;
-      this.currentColor.value = cl.value;
+      this.currentColor = value;
     },
   },
   methods: {
@@ -145,14 +143,19 @@ export default {
       this.$emit('update:priceFrom', this.currentPriceFrom);
       this.$emit('update:priceTo', this.currentPriceTo);
       this.$emit('update:categoryId', this.currentCategoryId);
-      this.$emit('update:color', this.currentColor.value);
+      this.$emit('update:color', this.currentColor);
     },
     reset() {
       this.$emit('update:priceFrom', 0);
       this.$emit('update:priceTo', 0);
       this.$emit('update:categoryId', 0);
-      this.$emit('update:color', {});
+      this.$emit('update:color', '');
     },
   },
 };
 </script>
+<style>
+.white_class {
+  --border-color: #FFF;
+}
+</style>

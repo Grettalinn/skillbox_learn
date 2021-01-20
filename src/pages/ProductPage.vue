@@ -40,7 +40,7 @@
 
             <fieldset class="form__block">
               <legend class="form__legend">Цвет:</legend>
-              <ProductColorList :colors="product.colors" :current-color.sync="currentColor"/>
+              <ProductColorList class="white_class" :colors="product.colors" :current-color.sync="currentColor"/>
             </fieldset>
 
             <fieldset class="form__block">
@@ -172,21 +172,27 @@ export default {
     category() {
       return categories.find((category) => category.id === this.product.categoryId);
     },
+    currColor() {
+      return products.find((product) => product.id === this.pageParams.id).checkedColor;
+    },
   },
   methods: {
     gotoPage,
   },
   data() {
     return {
-      currentColor: {},
+      currentColor: '',
     };
   },
   watch: {
     color(value) {
-      const cl = this.product.colors.find((color) => color.value === value);
-      this.currentColor.id = cl.id;
-      this.currentColor.value = cl.value;
+      this.currentColor = value;
     },
   },
 };
 </script>
+<style>
+.white_class {
+  --border-color: #FFF;
+}
+</style>
