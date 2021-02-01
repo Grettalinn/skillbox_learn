@@ -15,7 +15,7 @@ export default new Vuex.Store(
       addProductToCart(state, { productId, amount }) {
         const itemLoc = state.cartProducts.find((item) => item.productId === productId);
         if (itemLoc) {
-          itemLoc.amount += amount.number;
+          itemLoc.amount += amount;
         } else {
           state.cartProducts.push(
             {
@@ -29,11 +29,7 @@ export default new Vuex.Store(
         const itemLoc = state.cartProducts.find((item) => item.productId === productId);
 
         if (itemLoc) {
-          if (amount <= 0) {
-            itemLoc.amount = 0;
-          } else {
-            itemLoc.amount = amount.number;
-          }
+          itemLoc.amount = (amount > 0) ? amount : 0;
         }
       },
       deleteCartProduct(state, productId) {
