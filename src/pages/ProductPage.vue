@@ -153,13 +153,13 @@ export default {
   },
   computed: {
     product() {
-      return products.find((product) => product.id === this.productId);
+      return products.find((product) => product.id === +this.$route.params.id);
     },
     category() {
       return categories.find((category) => category.id === this.product.categoryId);
     },
     currColor() {
-      return products.find((product) => product.id === this.productId).checkedColor;
+      return products.find((product) => product.id === +this.$route.params.id).checkedColor;
     },
   },
   methods: {
@@ -175,19 +175,15 @@ export default {
     return {
       currentColor: '',
       productAmount: 1,
-      productId: +this.$route.params.id,
     };
   },
   watch: {
     color(value) {
       this.currentColor = value;
     },
-    productId() {
-      const ProductExists = products.find((product) => product.id === +this.$route.params.id);
-      if (ProductExists) {
-        this.productId = ProductExists.id;
-      } else {
-        gotoPage('NotFoundPage');
+    '$route.params.id': function () {
+      if (!this.product) {
+        this.$router.push({ name: 'notFound' });
       }
     },
   },
