@@ -1,5 +1,7 @@
 <template>
-  <main class="content container">
+  <main class="content container" v-if="productLoading">Загрузка товара...</main>
+  <main class="content container" v-else-if="!productData">Не удалось загрузить товар. Поробуйте еще раз</main>
+  <main class="content container" v-else>
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
@@ -23,7 +25,7 @@
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" :src="product.image" :alt="product.title">
+          <img width="570" height="570" :src="product.image.file.url" :alt="product.title">
         </div>
       </div>
 
@@ -77,10 +79,12 @@
             <div class="item__row">
               <ProductAmountEdit :product-amount.sync="productAmount" />
 
-              <button class="button button--primery" type="submit">
+              <button class="button button--primery" type="submit" :disabled="productAddSending">
                 В корзину
               </button>
             </div>
+            <div v-show="productAdded">Товар добавлен в корзину</div>
+            <div v-show="productAddSending">Добавляем товар в корзину...</div>
           </form>
         </div>
       </div>
@@ -139,12 +143,13 @@
 </template>
 
 <script>
-import products from '@/data/products';
-import categories from '@/data/categories';
 import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
 import ProductColorList from '@/components/ProductColorList.vue';
 import ProductAmountEdit from '@/components/ProductAmountEdit.vue';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config';
+import { mapActions } from 'vuex';
 
 export default {
   components: { ProductColorList, ProductAmountEdit },
@@ -153,38 +158,57 @@ export default {
   },
   computed: {
     product() {
-      return products.find((product) => product.id === +this.$route.params.id);
+      return this.productData;
     },
     category() {
-      return categories.find((category) => category.id === this.product.categoryId);
-    },
-    currColor() {
-      return products.find((product) => product.id === +this.$route.params.id).checkedColor;
+      return this.productData.category;
     },
   },
   methods: {
+    ...mapActions(['addProductToCart']),
     gotoPage,
     addToCart() {
-      this.$store.commit(
-        'addProductToCart',
-        { productId: this.product.id, amount: this.productAmount },
-      );
+      this.productAdded = false;
+      this.productAddSending = true;
+      this.addProductToCart({ productId: this.product.id, amount: this.productAmount })
+      // eslint-disable-next-line no-return-assign
+        .then(() => {
+          this.productAdded = true;
+          this.productAddSending = false;
+        });
+    },
+    loadProduct() {
+      this.productLoading = true;
+      this.productLoadingFailed = false;
+      return axios.get(` ${API_BASE_URL}/api/products/${this.$route.params.id}`)
+      // eslint-disable-next-line no-return-assign
+        .then((response) => this.productData = response.data)
+      // eslint-disable-next-line no-return-assign
+        .catch(() => { this.productsLoadingFailed = true; this.$router.push({ name: 'notFound' }); })
+      // eslint-disable-next-line no-return-assign
+        .then(() => { this.productLoading = false; this.currentColor = this.productData.colors[0].id; });
     },
   },
   data() {
     return {
       currentColor: '',
       productAmount: 1,
+      productData: null,
+      productLoading: false,
+      productLoadingFailed: false,
+      productAdded: false,
+      productAddSending: false,
     };
   },
   watch: {
     color(value) {
       this.currentColor = value;
     },
-    '$route.params.id': function () {
-      if (!this.product) {
-        this.$router.push({ name: 'notFound' });
-      }
+    '$route.params.id': {
+      handler() {
+        this.loadProduct();
+      },
+      immediate: true,
     },
   },
 };

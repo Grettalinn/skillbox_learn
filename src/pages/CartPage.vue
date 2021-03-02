@@ -24,7 +24,9 @@
 
     <section class="cart">
       <form class="cart__form form" action="#" method="POST">
-        <div class="cart__field">
+        <div v-if="productsLoading">Загрузка товаров...</div>
+        <div v-else-if="productsLoadingFailed">Произошла ошибка при загрузке товаров</div>
+        <div class="cart__field" v-else>
           <ul class="cart__list">
             <CartItem v-for="item in products" :key="item.productId" :item="item" />
           </ul>
@@ -61,6 +63,8 @@ export default {
       products: 'cartDetailProducts',
       totalPrice: 'cartTotalPrice',
       totalCount: 'cartTotalCount',
+      productsLoading: 'productsLoading',
+      productsLoadingFailed: 'productsLoadingFailed',
     }),
   },
 };

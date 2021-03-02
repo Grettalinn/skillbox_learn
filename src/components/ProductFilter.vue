@@ -101,19 +101,19 @@
 </template>
 
 <script>
-import categories from '@/data/categories';
-import colors from '@/data/colors';
 import ProductColorList from '@/components/ProductColorList.vue';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config';
 
 export default {
   components: { ProductColorList },
   props: ['priceFrom', 'priceTo', 'categoryId', 'color'],
   computed: {
     categories() {
-      return categories;
+      return this.categoriesData ? this.categoriesData.items : [];
     },
     colors() {
-      return colors;
+      return this.colorData ? this.colorData.items : [];
     },
   },
   data() {
@@ -121,7 +121,9 @@ export default {
       currentPriceFrom: 0,
       currentPriceTo: 0,
       currentCategoryId: 0,
-      currentColor: '',
+      currentColor: 0,
+      categoriesData: null,
+      colorData: null,
     };
   },
   watch: {
@@ -151,6 +153,20 @@ export default {
       this.$emit('update:categoryId', 0);
       this.$emit('update:color', '');
     },
+    loadCategories() {
+      axios.get(`${API_BASE_URL}/api/productCategories`)
+      // eslint-disable-next-line no-return-assign
+        .then((response) => this.categoriesData = response.data);
+    },
+    loadColors() {
+      axios.get(`${API_BASE_URL}/api/colors`)
+      // eslint-disable-next-line no-return-assign
+        .then((responce) => this.colorData = responce.data);
+    },
+  },
+  created() {
+    this.loadCategories();
+    this.loadColors();
   },
 };
 </script>

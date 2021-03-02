@@ -24,7 +24,7 @@ export default {
   components: { ProductColorList },
   data() {
     return {
-      currentColor: this.product.checkedColor,
+      currentColor: this.product.colors[0].id,
     };
   },
   watch: {
