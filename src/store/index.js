@@ -34,6 +34,9 @@ export default new Vuex.Store(
           amount: item.quantity,
         }));
       },
+      deleteCartProduct(state, productId) {
+        state.cartProducts = state.cartProducts.filter((item) => item.productId !== productId);
+      },
     },
     getters: {
       cartDetailProducts(state) {
@@ -126,6 +129,7 @@ export default new Vuex.Store(
           .catch(() => context.commit('syncCartProducts'));
       },
       deleteCartProduct(context, productId) {
+        context.commit('deleteCartProduct', { productId });
         // eslint-disable-next-line consistent-return
         return axios
           .delete(` ${API_BASE_URL}/api/baskets/products`, {

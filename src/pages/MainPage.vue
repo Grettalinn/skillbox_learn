@@ -10,7 +10,7 @@
     </div>
 
     <div class="content__catalog">
-      <ProductFilter :price-from.sync="filterPriceFrom" :price-to.sync="filterPriceTo" :category-id.sync="filterCategoryId" :color.sync="filterColor"/>
+      <ProductFilter :price-from.sync="productFilters.filterPriceFrom" :price-to.sync="productFilters.filterPriceTo" :category-id.sync="productFilters.filterCategoryId" :color.sync="productFilters.filterColor"/>
       <section class="catalog">
         <div v-if="productsLoading">Загрузка товаров...</div>
         <div v-if="productsLoadingFailed">Произошла ошибка при загрузке товаров <button @click.prevent="loadProducts">Попробовать еще раз</button></div>
@@ -34,15 +34,17 @@ export default {
   filters: { productCountFormat },
   data() {
     return {
-      filterPriceFrom: 0,
-      filterPriceTo: 0,
-      filterCategoryId: 0,
-      filterColor: 0,
       page: 1,
       productsPerPage: 3,
       productsData: null,
       productsLoading: false,
       productsLoadingFailed: false,
+      productFilters: {
+        filterPriceFrom: 0,
+        filterPriceTo: 0,
+        filterCategoryId: 0,
+        filterColor: 0,
+      },
     };
   },
   computed: {
@@ -68,10 +70,10 @@ export default {
           params: {
             page: this.page,
             limit: this.productsPerPage,
-            categoryId: this.filterCategoryId,
-            minPrice: this.filterPriceFrom,
-            maxPrice: this.filterPriceTo,
-            colorId: this.filterColor,
+            categoryId: this.productFilters.filterCategoryId,
+            minPrice: this.productFilters.filterPriceFrom,
+            maxPrice: this.productFilters.filterPriceTo,
+            colorId: this.productFilters.filterColor,
           },
         })
         // eslint-disable-next-line no-return-assign
@@ -84,14 +86,14 @@ export default {
     },
   },
   watch: {
-    page() { this.loadProducts(); },
-    filterPriceFrom() { this.loadProducts(); },
-    filterPriceTo() { this.loadProducts(); },
-    filterCategoryId() { this.loadProducts(); },
-    filterColor() { this.loadProducts(); },
-  },
-  created() {
-    this.loadProducts();
+    page: {
+      handler: 'loadProducts',
+      immediate: true,
+    },
+    productFilters: {
+      handler: 'loadProducts',
+      deep: true,
+    },
   },
 };
 </script>

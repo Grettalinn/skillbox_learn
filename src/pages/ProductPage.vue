@@ -83,8 +83,8 @@
                 В корзину
               </button>
             </div>
-            <div v-show="productAdded">Товар добавлен в корзину</div>
-            <div v-show="productAddSending">Добавляем товар в корзину...</div>
+            <div v-if="productAddSending">Добавляем товар в корзину...</div>
+            <div v-else-if="productAdded">Товар добавлен в корзину</div>
           </form>
         </div>
       </div>
@@ -184,7 +184,7 @@ export default {
       // eslint-disable-next-line no-return-assign
         .then((response) => this.productData = response.data)
       // eslint-disable-next-line no-return-assign
-        .catch(() => { this.productsLoadingFailed = true; this.$router.push({ name: 'notFound' }); })
+        .catch(() => { this.productsLoadingFailed = true; this.$router.replace({ name: 'notFound' }); })
       // eslint-disable-next-line no-return-assign
         .then(() => { this.productLoading = false; this.currentColor = this.productData.colors[0].id; });
     },
