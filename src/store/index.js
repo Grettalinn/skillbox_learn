@@ -13,8 +13,18 @@ export default new Vuex.Store(
       cartProductsData: [],
       productsLoading: false,
       productsLoadingFailed: false,
+      orderInfo: null,
+      orderLoading: false,
+      orderLoadError: false,
     },
     mutations: {
+      updateOrderInfo(state, orderInfo) {
+        state.orderInfo = orderInfo;
+      },
+      resetCart(state) {
+        state.cartProducts = [];
+        state.cartProductsData = [];
+      },
       updateCartProductAmount(state, { productId, amount }) {
         const itemLoc = state.cartProducts.find((item) => item.productId === productId);
 
@@ -39,6 +49,12 @@ export default new Vuex.Store(
       },
     },
     getters: {
+      orderDetail(state) {
+        return state.orderInfo;
+      },
+      orderTotalCount(state) {
+        return state.orderInfo.basket.items.length;
+      },
       cartDetailProducts(state) {
         return state.cartProducts.map((item) => {
           const { product } = state.cartProductsData.find((p) => p.product.id === item.productId);
@@ -63,8 +79,34 @@ export default new Vuex.Store(
       productsLoadingFailed(state) {
         return state.productsLoadingFailed;
       },
+      orderLoading(state) {
+        return state.orderLoading;
+      },
+      orderLoadingFailed(state) {
+        return state.orderLoadError;
+      },
     },
     actions: {
+      loadOrderInfo(context, orderId) {
+        this.orderLoadError = false;
+        this.orderLoading = true;
+        this.orderInfo = null;
+        return axios
+          .get(` ${API_BASE_URL}/api/orders/${orderId}`, {
+            params: {
+              userAccessKey: context.state.userAccessKey,
+            },
+          })
+          .then((response) => {
+            context.commit('updateOrderInfo', response.data);
+          })
+          // eslint-disable-next-line no-return-assign
+          .catch(() => {
+            this.orderLoadError = true;
+          })
+          // eslint-disable-next-line no-return-assign
+          .then(() => this.orderLoading = false);
+      },
       loadCart(context) {
         // eslint-disable-next-line no-param-reassign
         this.productsLoading = true;
