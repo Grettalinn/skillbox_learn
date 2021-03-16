@@ -53,7 +53,8 @@ export default new Vuex.Store(
         return state.orderInfo;
       },
       orderTotalCount(state) {
-        return state.orderInfo.basket.items.length;
+        return state.orderInfo.basket.items.reduce((acc, item) => (item.quantity) + acc, 0);
+        // state.orderInfo.basket.items.length;
       },
       cartDetailProducts(state) {
         return state.cartProducts.map((item) => {
@@ -70,8 +71,9 @@ export default new Vuex.Store(
       cartTotalPrice(state, getters) {
         return getters.cartDetailProducts.reduce((acc, item) => (item.product.price * item.amount) + acc, 0);
       },
-      cartTotalCount(state) {
-        return state.cartProducts.length;
+      cartTotalCount(state, getters) {
+        return getters.cartDetailProducts.reduce((acc, item) => (item.amount) + acc, 0);
+        // state.cartProducts.length;
       },
       productsLoading(state) {
         return state.productsLoading;
@@ -101,8 +103,9 @@ export default new Vuex.Store(
             context.commit('updateOrderInfo', response.data);
           })
           // eslint-disable-next-line no-return-assign
-          .catch(() => {
+          .catch((error) => {
             this.orderLoadError = true;
+            throw error;
           })
           // eslint-disable-next-line no-return-assign
           .then(() => this.orderLoading = false);
@@ -133,7 +136,7 @@ export default new Vuex.Store(
           .then(() => { this.productLoading = false; });
       },
       addProductToCart(context, { productId, amount }) {
-        return (new Promise((resolve) => setTimeout(resolve, 3000)))
+        return (new Promise((resolve) => setTimeout(resolve, 0)))
           .then(() => axios
             .post(` ${API_BASE_URL}/api/baskets/products`, {
               productId,

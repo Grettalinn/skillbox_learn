@@ -19,8 +19,8 @@
         </li>
       </ul>
 
-      <h1 class="content__title">
-        Заказ оформлен <span>№ {{ orderInfo.id }}</span>
+      <h1 class="content__title" v-if="orderDetail">
+        Заказ оформлен <span>№ {{ orderDetail.id }}</span>
       </h1>
     </div>
 
@@ -34,13 +34,13 @@
             Наши менеджеры свяжутся с&nbsp;Вами в&nbsp;течение часа для уточнения деталей доставки.
           </p>
 
-          <ul class="dictionary">
+          <ul class="dictionary" v-if="orderDetail">
             <li class="dictionary__item">
               <span class="dictionary__key">
                 Получатель
               </span>
               <span class="dictionary__value">
-                {{ orderInfo.name }}
+                {{ orderDetail.name }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -48,7 +48,7 @@
                 Адрес доставки
               </span>
               <span class="dictionary__value">
-                {{ orderInfo.address }}
+                {{ orderDetail.address }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -56,7 +56,7 @@
                 Телефон
               </span>
               <span class="dictionary__value">
-                {{ orderInfo.phone }}
+                {{ orderDetail.phone }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -64,7 +64,7 @@
                 Email
               </span>
               <span class="dictionary__value">
-                {{ orderInfo.email }}
+                {{ orderDetail.email }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -78,16 +78,8 @@
           </ul>
         </div>
 
-        <div class="cart__block">
-          <ul class="cart__orders">
-            <OrderProduct v-for="item in orderInfo.basket.items" :key="item.product.id" :item="item" />
-          </ul>
-
-          <div class="cart__total">
-            <p>Доставка: <b>500 ₽</b></p>
-            <p>Итого: <b>{{ orderTotalCount | productCountFormat }}</b> на сумму <b>{{ this.orderInfo.totalPrice | numberFormat }} ₽</b></p>
-          </div>
-        </div>
+        <OrderProductList v-if="orderDetail" :order-items="orderDetail.basket.items" :items-total-count="orderTotalCount" :total-price="orderDetail.totalPrice">
+        </OrderProductList>
       </form>
     </section>
   </main>
@@ -95,26 +87,28 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import OrderProduct from '@/components/OrderProduct.vue';
-import numberFormat from '@/helpers/numberFormat';
-import productCountFormat from '@/helpers/productCountFormat';
+import OrderProductList from '@/components/order/OrderProductList.vue';
 
 export default {
-  components: { OrderProduct },
-  filters: { numberFormat, productCountFormat },
-  created() {
-    if (this.$store.state.orderInfo && this.$store.state.orderInfo.id === this.$route.params.id) {
-      return;
-    }
-    this.$store.dispatch('loadOrderInfo', this.$route.params.id);
-  },
+  components: { OrderProductList },
   computed: {
-    ...mapGetters({
-      orderInfo: 'orderDetail',
-      orderTotalCount: 'orderTotalCount',
-      orderLoading: 'orderLoading',
-      orderLoadingFailed: 'orderLoadingFailed',
-    }),
+    ...mapGetters(['orderDetail', 'orderTotalCount', 'orderLoading', 'orderLoadingFailed']),
+  },
+  watch: {
+    '$route.params.id': {
+      handler() {
+        if (this.$store.state.orderInfo && this.$store.state.orderInfo.id === this.$route.params.id) {
+          return;
+        }
+        this.$store.dispatch('loadOrderInfo', this.$route.params.id)
+          .catch((error) => {
+            if (error.response.data.error.code === 0) {
+              this.$router.replace({ name: 'notFound' });
+            }
+          });
+      },
+      immediate: true,
+    },
   },
 };
 </script>

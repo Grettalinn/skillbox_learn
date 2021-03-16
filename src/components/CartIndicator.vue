@@ -5,7 +5,7 @@
     </svg>
     <span class="header__count" aria-label="Количество товаров" v-if="productsLoading">...</span>
     <span class="header__count" aria-label="Количество товаров" v-else-if="productsLoadingFailed">!!!</span>
-    <span class="header__count" aria-label="Количество товаров" v-else> {{ $store.state.cartProducts.length }} </span>
+    <span class="header__count" aria-label="Количество товаров" v-else> {{ totalCount }} </span>
   </router-link>
 </template>
 
@@ -15,6 +15,7 @@ import { mapGetters } from 'vuex';
 export default {
   computed: {
     ...mapGetters({
+      totalCount: 'cartTotalCount',
       productsLoading: 'productsLoading',
       productsLoadingFailed: 'productsLoadingFailed',
     }),

@@ -25,7 +25,7 @@ export default {
         return this.productAmount;
       },
       set(value) {
-        const lvalue = (value > 0) ? value : 0;
+        const lvalue = (value > 1) ? value : 1;
         this.$emit('update:productAmount', lvalue);
       },
     },

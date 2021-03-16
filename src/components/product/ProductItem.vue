@@ -16,9 +16,8 @@
 </template>
 
 <script>
-import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
-import ProductColorList from '@/components/ProductColorList.vue';
+import ProductColorList from '@/components/product/ProductColorList.vue';
 
 export default {
   components: { ProductColorList },
@@ -34,9 +33,6 @@ export default {
   },
   filters: {
     numberFormat,
-  },
-  methods: {
-    gotoPage,
   },
   props: ['product'],
 };

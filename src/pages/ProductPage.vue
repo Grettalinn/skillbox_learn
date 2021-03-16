@@ -143,10 +143,10 @@
 </template>
 
 <script>
-import gotoPage from '@/helpers/gotoPage';
+// import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
-import ProductColorList from '@/components/ProductColorList.vue';
-import ProductAmountEdit from '@/components/ProductAmountEdit.vue';
+import ProductColorList from '@/components/product/ProductColorList.vue';
+import ProductAmountEdit from '@/components/product/ProductAmountEdit.vue';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config';
 import { mapActions } from 'vuex';
@@ -166,7 +166,7 @@ export default {
   },
   methods: {
     ...mapActions(['addProductToCart']),
-    gotoPage,
+    // gotoPage,
     addToCart() {
       this.productAdded = false;
       this.productAddSending = true;

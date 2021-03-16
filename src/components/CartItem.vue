@@ -28,7 +28,7 @@
 
 <script>
 import numberFormat from '@/helpers/numberFormat';
-import ProductAmountEdit from '@/components/ProductAmountEdit.vue';
+import ProductAmountEdit from '@/components/product/ProductAmountEdit.vue';
 
 export default {
   props: ['item'],

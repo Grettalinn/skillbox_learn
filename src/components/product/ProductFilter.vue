@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import ProductColorList from '@/components/ProductColorList.vue';
+import ProductColorList from '@/components/product/ProductColorList.vue';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config';
 
@@ -161,7 +161,7 @@ export default {
     loadColors() {
       axios.get(`${API_BASE_URL}/api/colors`)
       // eslint-disable-next-line no-return-assign
-        .then((responce) => this.colorData = responce.data);
+        .then((response) => this.colorData = response.data);
     },
   },
   created() {

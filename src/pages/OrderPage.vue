@@ -23,7 +23,7 @@
         Корзина
       </h1>
       <span class="content__info">
-        3 товара
+        {{ totalCount | productCountFormat }}
       </span>
     </div>
 
@@ -81,23 +81,13 @@
           </div>
         </div>
 
-        <div class="cart__block">
-          <div v-if="productsLoading">Загрузка товаров...</div>
-          <div v-else-if="productsLoadingFailed">Произошла ошибка при загрузке товаров</div>
-          <ul class="cart__orders">
-            <OrderProduct v-for="item in products" :key="item.productId" :item="item" />
-          </ul>
-
-          <div class="cart__total">
-            <p>Доставка: <b>500 ₽</b></p>
-            <p>Итого: <b>{{ totalCount | productCountFormat }}</b> на сумму <b>{{ totalPrice | numberFormat }} ₽</b></p>
-          </div>
-
+        <OrderProductList :order-items="products" :items-total-count="totalCount" :total-price="totalPrice">
           <button class="cart__button button button--primery" type="submit">
             Оформить заказ
           </button>
           <div v-if="orderSending">Оформление заказа...</div>
-        </div>
+        </OrderProductList>
+
         <div class="cart__error form__error-block" v-if="formErrorMessage">
           <h4>Заявка не отправлена!</h4>
           <p>
@@ -110,17 +100,19 @@
 </template>
 
 <script>
-import BaseFormText from '@/components/BaseFormText.vue';
-import BaseFormTextarea from '@/components/BaseFormTextarea.vue';
+import BaseFormText from '@/components/base/BaseFormText.vue';
+import BaseFormTextarea from '@/components/base/BaseFormTextarea.vue';
 import { mapGetters } from 'vuex';
 import numberFormat from '@/helpers/numberFormat';
 import productCountFormat from '@/helpers/productCountFormat';
-import OrderProduct from '@/components/OrderProduct.vue';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config';
+import OrderProductList from '@/components/order/OrderProductList.vue';
 
 export default {
-  components: { BaseFormText, BaseFormTextarea, OrderProduct },
+  components: {
+    OrderProductList, BaseFormText, BaseFormTextarea,
+  },
   filters: { numberFormat, productCountFormat },
   data() {
     return {
